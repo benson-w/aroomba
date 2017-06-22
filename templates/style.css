@@ -1,0 +1,13 @@
+#main{
+/*	display: inline-block;*/
+	margin: 0 auto;
+	text-align: center;
+}
+
+.ui.icon.input {
+    padding: 2em;
+}
+
+.ui.icon.button {
+	padding: 2em;
+}
