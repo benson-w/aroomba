@@ -8,12 +8,19 @@
 		<meta name="description" content="">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css"> -->
+		<script
+		src="https://code.jquery.com/jquery-3.1.1.min.js"
+		integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+		crossorigin="anonymous"></script>
+		<script src="semantic/semantic.min.js"></script>
 		<style>
-        #main{
-        /*	display: inline-block;*/
-        	margin: 0 auto;
-        	text-align: center;
+        body{
+        	margin: 2 auto;
         }
+
+		.centerme {
+			text-align: center;
+		}
 
         .ui.icon.input {
             padding: 2em;
@@ -28,37 +35,122 @@
             left: 0;
             top: 0;
         }
+
+		.table-container {
+		display: none;
+	      padding: 2em;
+	    }
+
+		#banner {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  float: 0px;
+  width: 100%;
+  height: auto;
+  z-index: -1;}
+
         </style>
 
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/semantic.min.css"/>
 
 		<link rel="stylesheet" type="text/css" href="semantic/semantic.min.css">
-		<script
-		src="https://code.jquery.com/jquery-3.1.1.min.js"
-		integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-		crossorigin="anonymous"></script>
-		<script src="semantic/semantic.min.js"></script>
+		<script>
+		$('#takepicture').click(function(){
+			console.log('takepicturelog');
+		});
+
+		var openFile = function (event) {
+
+			document.getElementById("tableDetails").style.display = "block";
+
+			var input = event.target;
+			var reader = new FileReader();
+			reader.onload = function () {
+				var text = reader.result;
+				var node = document.getElementById('output');
+				node.innerText = text;
+			};
+			reader.readAsText(input.files[0]);
+		};
+
+		$('#choosefile').click(function(){
+			// document.getElementById("tableDetails").style.display = "block";
+			console.log('here');
+		});
+		</script>
+
 		<!-- <script src="script.js" type="text/javascript"></script> -->
 		<!--<link rel="stylesheet" href="css/main.css"> -->
 	</head>
 
 	<body>
-
+		<img id="banner" src="LLlogo.png" alt="Banner Image"/>
         <!--  image and take picture -->
+
+
         <div id="scanner-container"></div>
-        <input type="button" id="btn" value="Start/Stop the scanner" />
+        <!-- <input type="button" id="btn" value="Start/Stop the scanner"/> -->
+
+		<div class="centerme">
+		<button class="ui basic button" id="takepicture">
+			<i class="icon camera"></i>
+		Scan
+		</button>
+		<!--
+		<div class="centerme"> -->
+
 
 		<div id="main">
 			<div class="ui icon input">
 				<input type="text" name="barcodey" placeholder="A000099386">
-				<!-- <i class="circular search link icon"></i> -->
 			</div>
 
-			<button class="ui icon button" id="takepicture"><i class="camera icon"></i></button>
+			<input id="choosefile" type='file' accept='text/plain' onchange='openFile(event)'>
+	<br>
+
+			<!-- <button class="ui icon button" id="takepicture"><i class="camera icon"></i></button> -->
+
+
+			<div id='output'>...</div>
 
 
 		</div>
 
+		<div class="table-container" id="tableDetails">
+        <table class="ui celled table">
+          <thead>
+            <tr>
+              <th> </th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Compound</td>
+              <td><div id="barcodoi">A10000070</div></td>
+            </tr>
+            <tr>
+              <td>Libra Size</td>
+              <td>20 mL</td>
+            </tr>
+            <tr>
+              <td>Size Group</td>
+              <td class="negative"><i class="attention icon"></i> MISMATCH | 15 ml </td>
+            </tr>
+            <tr>
+              <td>Location</td>
+              <td>{A2, K20}</td>
+            </tr>
+            <tr>
+              <td>Last Scanned</td>
+              <td>06.20.2017</td>
+            </tr>
+          </tbody>
+        </table>
+
+	</div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 
@@ -137,7 +229,7 @@
                         }
 
                         if (result.codeResult && result.codeResult.code) {
-                            Quagga.ImageDebug.drawPath(result.line, { x: 'x', y: 'y' }, drawingCtx, { color: 'red', lineWidth: 3 });
+                            Quagga.ImageDebug.drawPath(result.line, { x: 'x', y: 'y + 200' }, drawingCtx, { color: 'red', lineWidth: 3 });
                         }
                     }
                 });
@@ -145,14 +237,17 @@
 
                 Quagga.onDetected(function (result) {
                     //console.log(result.codeResult.code);
-                    //document.getElementsByName('barcodey')[0].placeholder=result.codeResult.code;
+                    document.getElementsByName('barcodey')[0].placeholder=result.codeResult.code;
+					// barcodoi.innerHTML = result.codeResult.code;
+					// $("barcodoi").update("result.codeResult.code");
+					document.getElementById('barcodoi').innerHTML = result.codeResult.code;
                     console.log("Barcode detected and processed : [" + result.codeResult.code + "]", result);
                 });
             }
 
 
             // Start/stop scanner
-            document.getElementById("btn").addEventListener("click", function () {
+            document.getElementById("takepicture").addEventListener("click", function () {
                 if (_scannerIsRunning) {
                     Quagga.stop();
                 } else {
@@ -172,13 +267,6 @@
             console.log(jqXHR.responseText);
             return jqXHR.responseText;
             }
-
-            $('#takepicture').click(function(){
-				jQuery.get('result.txt', function(data) {
-					// var myvar = data;
-					console.log(myvar);
-				});
-            });
 
 
         </script>

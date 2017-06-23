@@ -39,7 +39,7 @@ results = searcher.search(features)
 cv2.imshow("Query", query)
 
 # empty a file
-# open("result.txt", 'w').close()
+open("result.txt", 'w').close()
 
 # create a file
 f = open('result.txt', 'w')
@@ -54,4 +54,5 @@ for (score, resultID) in results:
 	# print(resultID + ': ' + str(score), file=result.txt)
 	f.write(resultID + ': ' + str(score) + '\n')
 
-f.close()
+
+#f.close()
