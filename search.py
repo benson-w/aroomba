@@ -1,11 +1,18 @@
 # USAGE
 # python search.py --index index.csv --query queries/103100.png --result-path dataset
-
+# from __future__ import print_function
 # import the necessary packages
 from pyimagesearch.colordescriptor import ColorDescriptor
 from pyimagesearch.searcher import Searcher
 import argparse
 import cv2
+import numpy as np
+
+
+# take picture and store it
+cap = cv2.VideoCapture(1) # video capture source camera (Here webcam of laptop)
+ret,frame = cap.read() # return a single frame in variable `frame`
+cv2.imwrite('/Users/benson/Desktop/vacation-image-search-engine/queries/snapshot.png',frame)
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -31,6 +38,12 @@ results = searcher.search(features)
 # display the query
 cv2.imshow("Query", query)
 
+# empty a file
+# open("result.txt", 'w').close()
+
+# create a file
+f = open('result.txt', 'w')
+
 # loop over the results
 for (score, resultID) in results:
 	# load the result image and display it
@@ -38,3 +51,7 @@ for (score, resultID) in results:
 	cv2.imshow("Result", result)
 	cv2.waitKey(0)
 	print resultID + ': ' + str(score)
+	# print(resultID + ': ' + str(score), file=result.txt)
+	f.write(resultID + ': ' + str(score) + '\n')
+
+f.close()
